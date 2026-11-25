@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Operacional • Portaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-hover: #1e293b;
+      --accent: #2563eb;
+      --accent-soft: #eff6ff;
+      --accent-border: #bfdbfe;
+
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --danger-border: #fecaca;
+
+      --warning: #d97706;
+      --warning-soft: #fffbeb;
+      --warning-border: #fde68a;
+
+      --success: #059669;
+      --success-soft: #ecfdf5;
+      --success-border: #a7f3d0;
+
+      --bg-app: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.14);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navbar */
+    .topbar {
+      background: #0f172a;
+      color: #ffffff;
+      height: 68px;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.45);
+    }
+
+    .brand-text h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      display: block;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .role-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .role-pill.reader {
+      background: rgba(148, 163, 184, 0.16);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .role-pill.admin {
+      background: rgba(16, 185, 129, 0.18);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .btn {
+      border: none;
+      padding: 0.5rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.18s ease;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-admin-login {
+      background: #f59e0b;
+      color: #0f172a;
+    }
+    .btn-admin-login:hover { background: #fbbf24; }
+
+    .btn-admin-logout {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }
+    .btn-admin-logout:hover { background: rgba(239, 68, 68, 0.25); }
+
+    /* App Layout */
+    .app-shell {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      flex: 1;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: sticky;
+      top: 68px;
+      height: calc(100vh - 68px);
+      overflow-y: auto;
+    }
+
+    .sidebar-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      padding: 0 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .nav-item:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .nav-item-label {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .nav-count {
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: var(--text-muted);
+    }
+
+    .nav-item.active .nav-count {
+      background: #dbeafe;
+      color: var(--accent);
+    }
+
+    /* Severity Filter Pills in Sidebar */
+    .severity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .sev-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+    }
+
+    .sev-btn:hover { background: #f8fafc; }
+    .sev-btn.active {
+      background: #f1f5f9;
+      border-color: var(--border);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .sev-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .sev-dot.all { background: #64748b; }
+    .sev-dot.danger { background: var(--danger); }
+    .sev-dot.warning { background: var(--warning); }
+    .sev-dot.info { background: var(--accent); }
+
+    /* Main Content */
+    .main-content {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-width: 0;
+    }
+
+    /* Admin Toolbar */
+    .admin-panel {
+      background: linear-gradient(to right, #ecfdf5, #f0fdf4);
+      border: 1px solid #a7f3d0;
+      border-radius: var(--radius);
+      padding: 0.9rem 1.15rem;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .admin-panel.visible { display: flex; }
+
+    .admin-panel-text {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #065f46;
+    }
+
+    .admin-panel-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary-green { background: #059669; color: white; }
+    .btn-primary-green:hover { background: #047857; }
+    .btn-ghost-green { background: white; color: #065f46; border: 1px solid #6ee7b7; }
+    .btn-ghost-green:hover { background: #d1fae5; }
+
+    /* Reference Cards (Diretoria & Prioridades) */
+    .ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1rem;
+    }
+
+    .ref-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.15rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ref-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.65rem;
+    }
+
+    .director-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .director-chip {
+      background: #f1f5f9;
+      color: #1e293b;
+      border: 1px solid #e2e8f0;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 0.22rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    .priority-steps {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .p-step {
+      background: var(--warning-soft);
+      color: #92400e;
+      border: 1px solid var(--warning-border);
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .p-arrow { color: var(--text-muted); font-size: 0.75rem; }
+
+    /* Search & Controls Bar */
+    .controls-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-wrapper svg {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 18px;
+      height: 18px;
+    }
+
+    .search-wrapper input {
+      width: 100%;
+      padding: 0.6rem 2.2rem 0.6rem 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      background: #f8fafc;
+      outline: none;
+      transition: all 0.15s;
+    }
+
+    .search-wrapper input:focus {
+      background: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .clear-search {
+      position: absolute;
+      right: 0.65rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #e2e8f0;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 0.72rem;
+      cursor: pointer;
+      color: var(--text-secondary);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clear-search.visible { display: flex; }
+
+    .controls-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .results-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .view-toggle {
+      display: flex;
+      background: #f1f5f9;
+      padding: 0.2rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .view-btn {
+      border: none;
+      background: transparent;
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .view-btn.active {
+      background: white;
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Cards Grid & List Mode */
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1rem;
+    }
+
+    .cards-container.list-view {
+      grid-template-columns: 1fr;
+    }
+
+    .proc-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .proc-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+    }
+
+    .proc-card.alert-danger::before { background: var(--danger); }
+    .proc-card.alert-warning::before { background: var(--warning); }
+    .proc-card.alert-info::before { background: var(--accent); }
+
+    .proc-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .code-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.18rem 0.55rem;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+
+    .cat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .card-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.45rem;
+      line-height: 1.35;
+    }
+
+    .card-body {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      white-space: pre-line;
+      line-height: 1.55;
+    }
+
+    .card-bottom {
+      margin-top: 1rem;
+      padding-top: 0.7rem;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .card-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .updated-info {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .tag-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .tag-danger { background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger-border); }
+    .tag-warning { background: var(--warning-soft); color: #b45309; border: 1px solid var(--warning-border); }
+    .tag-info { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-border); }
+
+    .card-actions {
+      display: flex;
+      gap: 0.45rem;
+      padding-top: 0.35rem;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 0.38rem 0.6rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .action-btn:hover { background: #e2e8f0; color: var(--text-main); }
+    .action-btn.del { color: var(--danger); background: var(--danger-soft); border-color: var(--danger-border); }
+    .action-btn.del:hover { background: #fee2e2; }
+
+    /* Empty State */
+    .empty-state {
+      grid-column: 1 / -1;
+      background: var(--bg-card);
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 { color: var(--text-main); margin-bottom: 0.35rem; font-size: 1rem; }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 200;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-box {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.18s ease-out;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h3 { font-size: 1.05rem; font-weight: 700; }
+
+    .form-group { margin-bottom: 0.9rem; }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.62rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-group textarea { min-height: 110px; resize: vertical; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      margin-top: 1.25rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-neutral { background: #f1f5f9; color: var(--text-secondary); }
+    .btn-neutral:hover { background: #e2e8f0; }
+    .btn-accent { background: var(--accent); color: white; }
+    .btn-accent:hover { background: #1d4ed8; }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      background: #0f172a;
+      color: white;
+      padding: 0.75rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(120%);
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 300;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 0.85rem 1rem;
+        gap: 0.85rem;
+      }
+      .nav-list, .severity-list {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+      }
+      .nav-item, .sev-btn { white-space: nowrap; width: auto; }
+    }
+
+    @media (max-width: 600px) {
+      .topbar { padding: 0 1rem; }
+      .brand-text span { display: none; }
+      .main-content { padding: 1rem; }
+      .cards-container { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">🛡️</div>
+      <div class="brand-text">
+        <h1>PORTARIA • MANUAL OPERACIONAL</h1>
+        <span>Normas, Controle de Acesso e Balança</span>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <span class="role-pill reader" id="roleBadge">
+        <span class="dot"></span>
+        <span id="roleText">Modo Leitor</span>
+      </span>
+      <button class="btn btn-admin-login" id="btnLoginAdmin">🔒 Admin</button>
+      <button class="btn btn-admin-logout" id="btnLogoutAdmin" style="display:none;">🚪 Sair Admin</button>
+    </div>
+  </header>
+
+  <!-- App Shell -->
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-section-title">Categorias</div>
+        <nav class="nav-list" id="categoryNav"></nav>
+      </div>
+
+      <div>
+        <div class="sidebar-section-title">Nível de Criticidade</div>
+        <div class="severity-list" id="severityNav">
+          <button class="sev-btn active" data-sev="TODOS"><span class="sev-dot all"></span> Todos os níveis</button>
+          <button class="sev-btn" data-sev="danger"><span class="sev-dot danger"></span> Crítico / Proibição</button>
+          <button class="sev-btn" data-sev="warning"><span class="sev-dot warning"></span> Atenção / Horário</button>
+          <button class="sev-btn" data-sev="info"><span class="sev-dot info"></span> Procedimento Padrão</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Barra do Administrador -->
+      <section class="admin-panel" id="adminBar">
+        <div class="admin-panel-text">
+          <span>🔑 Painel do Administrador Ativo</span>
+        </div>
+        <div class="admin-panel-actions">
+          <button class="btn btn-primary-green" id="btnOpenNew">➕ Incluir Procedimento</button>
+          <button class="btn btn-ghost-green" id="btnExport">💾 Exportar Backup</button>
+          <button class="btn btn-ghost-green" id="btnImportTrigger">📂 Importar Backup</button>
+          <input type="file" id="importFile" accept=".json" style="display:none;" />
+        </div>
+      </section>
+
+      <!-- Cartões de Referência Rápida -->
+      <section class="ref-grid">
+        <div class="ref-card">
+          <div class="ref-card-header">👔 Diretoria Autorizada</div>
+          <div class="director-tags">
+            <span class="director-chip">WELLITON</span>
+            <span class="director-chip">CARLOS (CACÁ)</span>
+            <span class="director-chip">FAUSTO</span>
+            <span class="director-chip">CRISTIANE</span>
+            <span class="director-chip">JAIRO</span>
+            <span class="director-chip">MAURÍCIO</span>
+            <span class="director-chip">CARLINHOS</span>
+          </div>
+        </div>
+
+        <div class="ref-card">
+          <div class="ref-card-header">⚡ Ordem de Prioridade no Atendimento (Item 27)</div>
+          <div class="priority-steps">
+            <span class="p-step">1º Diretoria</span>
+            <span class="p-arrow">➔</span>
+            <span class="p-step">2º Pesagem</span>
+            <span class="p-arrow">➔</span>
+            <span class="p-step">3º Gestores</span>
+            <span class="p-arrow">➔</span>
+            <span class="p-step">4º Frota Empresa</span>
+            <span class="p-arrow">➔</span>
+            <span class="p-step">5º Funcionários</span>
+            <span class="p-arrow">➔</span>
+            <span class="p-step">6º Terceiros</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Barra de Busca e Exibição -->
+      <section class="controls-bar">
+        <div class="search-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Pesquisar por número, assunto, palavra-chave ou responsável (ex: Roni, Balança, O.S)..." />
+          <button class="clear-search" id="clearSearchBtn" title="Limpar busca">✕</button>
+        </div>
+
+        <div class="controls-meta">
+          <span class="results-label" id="resultCount">40 itens</span>
+          <div class="view-toggle">
+            <button class="view-btn active" id="btnGridView" title="Visualização em Grade">▦ Grade</button>
+            <button class="view-btn" id="btnListView" title="Visualização em Lista">☰ Lista</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lista de Cartões -->
+      <section class="cards-container" id="cardsContainer"></section>
+    </main>
+  </div>
+
+  <!-- Modal Login Admin -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal-box" style="max-width: 390px;">
+      <div class="modal-header">
+        <h3>🔐 Acesso Restrito • Administrador</h3>
+      </div>
+      <p style="font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        Usuários operacionais possuem perfil <strong>Somente Leitura</strong>. Digite a senha para liberar inclusão e edição.
+      </p>
+      <div class="form-group">
+        <label for="adminPassword">Senha de Acesso</label>
+        <input type="password" id="adminPassword" placeholder="Digite a senha..." />
+      </div>
+      <p id="loginError" style="color: var(--danger); font-size: 0.8rem; font-weight: 600; display:none; margin-bottom:0.5rem;">
+        ⚠️ Senha incorreta. Tente novamente.
+      </p>
+      <div class="modal-footer">
+        <button class="btn btn-neutral" id="btnCancelLogin">Cancelar</button>
+        <button class="btn btn-accent" id="btnConfirmLogin">Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Incluir / Editar -->
+  <div class="modal-backdrop" id="formModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="formModalTitle">➕ Novo Procedimento</h3>
+      </div>
+      <form id="procForm">
+        <input type="hidden" id="editIndex" value="-1" />
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fieldId">Número / Código *</label>
+            <input type="text" id="fieldId" required placeholder="Ex: 40" />
+          </div>
+          <div class="form-group">
+            <label for="fieldCategoria">Categoria *</label>
+            <select id="fieldCategoria" required>
+              <option value="Balança e Pesagem">Balança e Pesagem</option>
+              <option value="Frota e Veículos">Frota e Veículos</option>
+              <option value="Acesso, Chaves e Crachás">Acesso, Chaves e Crachás</option>
+              <option value="Fornecedores e Cargas">Fornecedores e Cargas</option>
+              <option value="Conduta e Diretrizes">Conduta e Diretrizes</option>
+              <option value="Sistema e Contingência">Sistema e Contingência</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fieldAssunto">Assunto / Título *</label>
+          <input type="text" id="fieldAssunto" required placeholder="Ex: LIBERAÇÃO DE PORTÃO LATERAL" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fieldNivel">Nível de Criticidade</label>
+            <select id="fieldNivel">
+              <option value="info">Padrão (Azul)</option>
+              <option value="warning">Atenção / Horário / Autorização (Amarelo)</option>
+              <option value="danger">Crítico / Obrigatório / Proibição (Vermelho)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fieldTag">Etiqueta Rápida *</label>
+            <input type="text" id="fieldTag" required placeholder="Ex: Obrigatório, Autorização..." />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fieldDescricao">Descrição Completa *</label>
+          <textarea id="fieldDescricao" required placeholder="Descreva o passo a passo ou regra do procedimento..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-neutral" id="btnCancelForm">Cancelar</button>
+          <button type="submit" class="btn btn-accent">💾 Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const ADMIN_SENHA = "admin123";
+    const STORAGE_KEY = "portaria_procedimentos_v3";
+    const DATA_INICIAL = "Base Oficial";
+
+    const CATEGORIAS = [
+      { id: "TODOS", nome: "Todos os Procedimentos", icon: "📋" },
+      { id: "Balança e Pesagem", nome: "Balança e Pesagem", icon: "⚖️" },
+      { id: "Frota e Veículos", nome: "Frota e Veículos", icon: "🚛" },
+      { id: "Acesso, Chaves e Crachás", nome: "Acesso, Chaves e Crachás", icon: "🔑" },
+      { id: "Fornecedores e Cargas", nome: "Fornecedores e Cargas", icon: "📦" },
+      { id: "Conduta e Diretrizes", nome: "Conduta e Diretrizes", icon: "🛡️" },
+      { id: "Sistema e Contingência", nome: "Sistema e Contingência", icon: "⚙️" }
+    ];
+
+    const procedimentosIniciais = [
+      { id: "01", assunto: "ASM", categoria: "Fornecedores e Cargas", nivel: "info", tag: "Passo a Passo", descricao: "Seguir o passo a passo padrão do processo ASM.", atualizadoEm: DATA_INICIAL },
+      { id: "02", assunto: "CAMINHÕES ZERO EM TESTE", categoria: "Frota e Veículos", nivel: "info", tag: "Aplicativo", descricao: "No aplicativo, na frota escolher a opção \"TESTE\" quando tiver caminhões zero sendo usados em teste na base. Na opção placa, coloque a placa do mesmo.", atualizadoEm: DATA_INICIAL },
+      { id: "03", assunto: "CANCELA ESTACIONAMENTO", categoria: "Acesso, Chaves e Crachás", nivel: "warning", tag: "Horário Rígido", descricao: "Horário permitido para ficar aberto:\n• Manhã: 07:15 às 07:45\n• Tarde: 17:15 às 17:45", atualizadoEm: DATA_INICIAL },
+      { id: "04", assunto: "CARREGAMENTO DE MADEIRAS GRUPO ECO", categoria: "Fornecedores e Cargas", nivel: "warning", tag: "Conferência NF", descricao: "Toda vez que saírem caminhões para buscar madeira, verificar se tem NF nova na pasta de notas da respectiva fazenda.", atualizadoEm: DATA_INICIAL },
+      { id: "05", assunto: "CARTÃO DE VISITANTES", categoria: "Acesso, Chaves e Crachás", nivel: "info", tag: "Registro", descricao: "Todo cartão de visitante também deverá ser anotado na planilha impressa: Controle de Cartões.", atualizadoEm: DATA_INICIAL },
+      { id: "06", assunto: "CHAVE ALMOXARIFADO ECOFOREST", categoria: "Acesso, Chaves e Crachás", nivel: "warning", tag: "Autorização", descricao: "Só poderá ser entregue mediante autorização da Angélica ou do Líder do Pátio após ligar ou mandar mensagem no celular da portaria. Anotar no Controle de Chaves qual líder autorizou.", atualizadoEm: DATA_INICIAL },
+      { id: "07", assunto: "CHAVE AMBULATÓRIO", categoria: "Acesso, Chaves e Crachás", nivel: "warning", tag: "Autorização", descricao: "Só pode ser entregue com autorização do Roni ou Fabiana (RH) (exceto Diretoria). Marcar na planilha de Controle de Chaves conforme procedimento.", atualizadoEm: DATA_INICIAL },
+      { id: "08", assunto: "COMPRA DE CAVACO E DESCARREGAR MADEIRA COMBIO", categoria: "Fornecedores e Cargas", nivel: "warning", tag: "Horário / Messias", descricao: "Recebimento inicia na segunda-feira às 06:00 e encerra no sábado às 06:00. Qualquer horário fora desse período, entrar em contato com Messias para autorização.", atualizadoEm: DATA_INICIAL },
+      { id: "09", assunto: "CRACHÁ VISITANTES", categoria: "Acesso, Chaves e Crachás", nivel: "info", tag: "Retenção", descricao: "Quando um terceiro sair da empresa e voltar no mesmo dia, o crachá fica retido na portaria até a volta. Ao retornar, deve ser anunciado e recepcionado pelo responsável do setor se entrar a pé.", atualizadoEm: DATA_INICIAL },
+      { id: "10", assunto: "ENTREGA DE MATERIAL LOJA EVERALDO CAMINHÕES", categoria: "Fornecedores e Cargas", nivel: "info", tag: "WhatsApp", descricao: "Quando chegar entrega de material para Loja Everaldo, mandar mensagem no grupo WhatsApp do Recebimento e marcar a Angélica, que dirá para onde encaminhar o material.", atualizadoEm: DATA_INICIAL },
+      { id: "11", assunto: "DIRETRIZ: PROBLEMAS FORA DO SETOR", categoria: "Conduta e Diretrizes", nivel: "danger", tag: "Proibição", descricao: "A equipe da portaria está proibida de tentar resolver problemas não relacionados às atividades do setor. Qualquer situação alheia deve ser encaminhada imediatamente ao Líder da Portaria (presencial ou WhatsApp).", atualizadoEm: DATA_INICIAL },
+      { id: "12", assunto: "FROTA SAINDO NO GUINCHO", categoria: "Frota e Veículos", nivel: "danger", tag: "O.S. Obrigatória", descricao: "Todo veículo da frota que sair no guincho precisa apresentar O.S (Ordem de Serviço). Caso o motorista não tenha, ligar imediatamente para o Líder do Pátio solicitando a O.S.", atualizadoEm: DATA_INICIAL },
+      { id: "13", assunto: "LANÇAMENTOS CONTROLE DE ACESSO (CATEGORIA)", categoria: "Sistema e Contingência", nivel: "info", tag: "Cadastro", descricao: "No tipo de categoria Visitante, usar \"Visita na Loja Everaldo\" e \"Entrevistas\".", atualizadoEm: DATA_INICIAL },
+      { id: "14", assunto: "LANÇAMENTOS CONTROLE DE ACESSO (A PÉ)", categoria: "Sistema e Contingência", nivel: "info", tag: "Cadastro", descricao: "Quando o acesso estiver a pé, na modalidade deixar o campo em branco.", atualizadoEm: DATA_INICIAL },
+      { id: "15", assunto: "LIBERAÇÃO DE CARTÃO PROVISÓRIO", categoria: "Acesso, Chaves e Crachás", nivel: "warning", tag: "Checagem InControl", descricao: "Antes de liberar, verificar se ainda é funcionário:\nAbra InControl → Usuários → Filtros → Grupo de Acesso → Digite \"BLOQUEADOS\" → Filtrar. O resultado mostra os funcionários bloqueados.", atualizadoEm: DATA_INICIAL },
+      { id: "16", assunto: "LIBERAÇÃO DE QUALQUER TIPO DE MATERIAL NA PORTARIA", categoria: "Fornecedores e Cargas", nivel: "danger", tag: "Documentação Obrigatória", descricao: "Todo material/equipamento que sair da empresa precisa ter ASM, NF e Romaneio (Pedido) carimbado e assinado. Ninguém (exceto Diretoria) pode autorizar diferente. Relatar por e-mail.", atualizadoEm: DATA_INICIAL },
+      { id: "17", assunto: "LIBERAÇÃO RH FOREST (FUNCIONÁRIOS DO RONI)", categoria: "Acesso, Chaves e Crachás", nivel: "warning", tag: "Autorização Roni", descricao: "Só é permitido liberar funcionários da equipe do Roni no RH após o Roni ou líderes mandarem mensagem no WhatsApp ou ligarem na portaria (exceto em horário de almoço).", atualizadoEm: DATA_INICIAL },
+      { id: "18", assunto: "MADEIRA SYLVAMO (PESO)", categoria: "Balança e Pesagem", nivel: "warning", tag: "Limite de Peso", descricao: "Peso bruto permitido:\n• Mínimo: 85.000 kg\n• Máximo permitido: 90.000 kg (podendo chegar a 95.000 kg).", atualizadoEm: DATA_INICIAL },
+      { id: "19", assunto: "MÁQUINAS SYLVAMO", categoria: "Frota e Veículos", nivel: "info", tag: "Guarda no Pátio", descricao: "Caso solicitado, a portaria pode permitir que máquinas da Sylvamo sejam guardadas dentro da empresa. Anotar nome completo e placa do veículo (se houver).", atualizadoEm: DATA_INICIAL },
+      { id: "20", assunto: "MATERIAIS DIVERSOS CAÍDOS LADO EXTERNO", categoria: "Conduta e Diretrizes", nivel: "info", tag: "Segurança", descricao: "Quando um colaborador relatar materiais diversos caídos no lado externo da empresa, orientá-lo a comunicar a equipe de Segurança do Trabalho.", atualizadoEm: DATA_INICIAL },
+      { id: "21", assunto: "PASTA MULTAS E NOTIFICAÇÕES DE TRÂNSITO", categoria: "Conduta e Diretrizes", nivel: "info", tag: "Arquivo", descricao: "Colocar todos os papéis e documentos entregues por motoristas sobre multas e notificações na pasta exclusiva: \"PASTA MULTAS E NOTIFICAÇÕES TRÂNSITO\".", atualizadoEm: DATA_INICIAL },
+      { id: "22", assunto: "PERTENCES DE TERCEIROS NA PORTARIA", categoria: "Conduta e Diretrizes", nivel: "danger", tag: "Proibido Guardar", descricao: "É proibido deixar chaves de terceiros ou quaisquer outros pertences na portaria. Caso insistam, pedir para ligar para o Líder da Portaria (exceto se solicitado pela Diretoria).", atualizadoEm: DATA_INICIAL },
+      { id: "23", assunto: "PESAGEM COMPRA DE FERRO, CHAPAS, PREGOS", categoria: "Balança e Pesagem", nivel: "danger", tag: "Não Pesar", descricao: "Desde 26/02/2026: NÃO realizamos mais a pesagem de compra de ferro, chapas e pregos.", atualizadoEm: "26/02/2026" },
+      { id: "24", assunto: "PESAGEM DE TERCEIROS", categoria: "Balança e Pesagem", nivel: "info", tag: "Procedimento", descricao: "No processo de pesagem e controle de acesso de terceiros, usar apenas a placa do cavalo.", atualizadoEm: DATA_INICIAL },
+      { id: "25", assunto: "PESAGEM FROTA OPERACIONAL", categoria: "Balança e Pesagem", nivel: "info", tag: "Regra Balança", descricao: "Devido às muitas alterações de carretas, não temos mais pesagem salva na balança de frota operacional.", atualizadoEm: DATA_INICIAL },
+      { id: "26", assunto: "PORTÃO CATRACA (FALHA)", categoria: "Sistema e Contingência", nivel: "warning", tag: "Contingência", descricao: "Quando a catraca parar de funcionar, destrancar o cadeado. A chave encontra-se no chaveiro.", atualizadoEm: DATA_INICIAL },
+      { id: "27", assunto: "PRIORIDADES NO ATENDIMENTO", categoria: "Conduta e Diretrizes", nivel: "warning", tag: "Ordem Oficial", descricao: "1. Diretoria\n2. Pesagem\n3. Gestores da empresa\n4. Frotas da empresa\n5. Funcionários\n6. Terceiros em geral (segundo ordem de chegada)", atualizadoEm: DATA_INICIAL },
+      { id: "28", assunto: "PROBLEMA CATRACA PORTARIA", categoria: "Sistema e Contingência", nivel: "info", tag: "InControl", descricao: "Quando apresentar problema na catraca, utilizar o botão \"Catraca - Funcionários-4\" no aplicativo InControl.", atualizadoEm: DATA_INICIAL },
+      { id: "29", assunto: "QUEDA DE ENERGIA", categoria: "Sistema e Contingência", nivel: "warning", tag: "Checklist Energia", descricao: "1. Relatar os horários em que caiu e voltou a energia.\n2. Reiniciar todas as cancelas (abrir e fechar pelo menos 3 vezes).", atualizadoEm: DATA_INICIAL },
+      { id: "30", assunto: "RECUSA PROCEDIMENTO VISTORIA DE VEÍCULO", categoria: "Acesso, Chaves e Crachás", nivel: "danger", tag: "Bloqueio Cancela", descricao: "Enquanto funcionário ou terceiro não abrir o porta-malas para vistoria, a portaria NÃO abrirá a cancela. Caso forme fila, ligar para o Líder da Portaria.", atualizadoEm: DATA_INICIAL },
+      { id: "31", assunto: "DIRETRIZ: DÚVIDAS APENAS COM LÍDER DA PORTARIA", categoria: "Conduta e Diretrizes", nivel: "danger", tag: "LD Cesar", descricao: "A equipe da portaria não deve, em hipótese alguma, tirar dúvidas de trabalho ou procedimentos com gestores de outras áreas. Direcionar exclusivamente ao Líder da Portaria.", atualizadoEm: DATA_INICIAL },
+      { id: "32", assunto: "ROMANEIO", categoria: "Fornecedores e Cargas", nivel: "info", tag: "Obrigatório", descricao: "Realizar o preenchimento completo do romaneio.", atualizadoEm: DATA_INICIAL },
+      { id: "33", assunto: "SAÍDA DE PALETES (ECOFORTE)", categoria: "Balança e Pesagem", nivel: "warning", tag: "Pesagem Dupla", descricao: "Devido às trocas de cavalo e carreta, realizar a pesagem inicial com o veículo carregado e, no retorno, fazer o fechamento do peso usando sempre cavalo e carreta equivalentes.", atualizadoEm: DATA_INICIAL },
+      { id: "34", assunto: "SERVIÇO EXTERNO (O.S)", categoria: "Frota e Veículos", nivel: "danger", tag: "O.S. Obrigatória", descricao: "Todo veículo que sair para serviço externo deve apresentar O.S (Ordem de Serviço). Sem O.S, o motorista deve retornar à manutenção e solicitar ao Líder do Pátio.", atualizadoEm: DATA_INICIAL },
+      { id: "35", assunto: "TGA", categoria: "Balança e Pesagem", nivel: "info", tag: "Não Pesar", descricao: "Avisar Marina (Qualidade). Não precisa pesar.", atualizadoEm: DATA_INICIAL },
+      { id: "36", assunto: "TRANSANTANA", categoria: "Fornecedores e Cargas", nivel: "info", tag: "Horários / Bruno", descricao: "• Abastecimento: Liberado 24h (comunicar no grupo Portaria - Bruno, registrar placa e horário).\n• Descarga: Segunda a sexta-feira, das 06:00 às 22:00.", atualizadoEm: DATA_INICIAL },
+      { id: "37", assunto: "VAGA PARA CARGA RESTAURANTE", categoria: "Frota e Veículos", nivel: "info", tag: "Controle de Vaga", descricao: "Há uma vaga exclusiva para cargas no restaurante. Liberar apenas um veículo por vez.", atualizadoEm: DATA_INICIAL },
+      { id: "38", assunto: "VALMIR (CEITEC - INMETRO)", categoria: "Acesso, Chaves e Crachás", nivel: "info", tag: "Acesso Liberado", descricao: "Liberado direto pelo Roni.", atualizadoEm: DATA_INICIAL },
+      { id: "39A", assunto: "ENTREGA DE NF CAVACO COMBIO (BALANÇA)", categoria: "Balança e Pesagem", nivel: "danger", tag: "Regra Obrigatória", descricao: "A cancela da balança só deve ser liberada após o motorista do cavaco combio apresentar e entregar a Nota Fiscal (NF) presencialmente na portaria. Não liberar sem conferência prévia.", atualizadoEm: "22/07/2026" },
+      { id: "39B", assunto: "VEÍCULOS QUE NÃO SÃO DA FROTA (ALUGADOS)", categoria: "Frota e Veículos", nivel: "info", tag: "Controle de Acesso", descricao: "Fazer o procedimento de controle de acesso de veículo alugado e lançar no aplicativo Controle de Acesso (somente carros da Diretoria não precisam ser lançados).", atualizadoEm: DATA_INICIAL }
+    ];
+
+    let procedimentos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || procedimentosIniciais;
+    let isAdmin = false;
+    let currentCategory = 'TODOS';
+    let currentSeverity = 'TODOS';
+
+    // DOM
+    const container = document.getElementById('cardsContainer');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const categoryNav = document.getElementById('categoryNav');
+    const resultCount = document.getElementById('resultCount');
+    const roleBadge = document.getElementById('roleBadge');
+    const roleText = document.getElementById('roleText');
+    const adminBar = document.getElementById('adminBar');
+    const btnLoginAdmin = document.getElementById('btnLoginAdmin');
+    const btnLogoutAdmin = document.getElementById('btnLogoutAdmin');
+    const loginModal = document.getElementById('loginModal');
+    const formModal = document.getElementById('formModal');
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function salvarLocal() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(procedimentos));
+    }
+
+    function formatarDataAtual() {
+      const agora = new Date();
+      const d = String(agora.getDate()).padStart(2, '0');
+      const m = String(agora.getMonth() + 1).padStart(2, '0');
+      const a = agora.getFullYear();
+      const h = String(agora.getHours()).padStart(2, '0');
+      const min = String(agora.getMinutes()).padStart(2, '0');
+      return `${d}/${m}/${a} às ${h}:${min}`;
+    }
+
+    function renderSidebar() {
+      categoryNav.innerHTML = CATEGORIAS.map(cat => {
+        const count = cat.id === 'TODOS'
+          ? procedimentos.length
+          : procedimentos.filter(p => p.categoria === cat.id).length;
+
+        return `
+          <button class="nav-item ${currentCategory === cat.id ? 'active' : ''}" data-cat="${cat.id}">
+            <span class="nav-item-label"><span>${cat.icon}</span> ${cat.nome}</span>
+            <span class="nav-count">${count}</span>
+          </button>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentCategory = btn.dataset.cat;
+          renderSidebar();
+          renderCards();
+        });
+      });
+    }
+
+    function atualizarInterfacePerfil() {
+      if (isAdmin) {
+        roleBadge.className = "role-pill admin";
+        roleText.textContent = "Administrador";
+        adminBar.classList.add("visible");
+        btnLoginAdmin.style.display = "none";
+        btnLogoutAdmin.style.display = "inline-flex";
+      } else {
+        roleBadge.className = "role-pill reader";
+        roleText.textContent = "Modo Leitor";
+        adminBar.classList.remove("visible");
+        btnLoginAdmin.style.display = "inline-flex";
+        btnLogoutAdmin.style.display = "none";
+      }
+      renderCards();
+    }
+
+    function renderCards() {
+      const term = searchInput.value.toLowerCase().trim();
+      clearSearchBtn.classList.toggle('visible', term.length > 0);
+
+      const filtered = procedimentos
+        .map((item, realIndex) => ({ ...item, realIndex }))
+        .filter(item => {
+          const matchCat = currentCategory === 'TODOS' || item.categoria === currentCategory;
+          const matchSev = currentSeverity === 'TODOS' || item.nivel === currentSeverity;
+          const matchText =
+            item.assunto.toLowerCase().includes(term) ||
+            item.descricao.toLowerCase().includes(term) ||
+            item.id.toLowerCase().includes(term) ||
+            item.tag.toLowerCase().includes(term);
+          return matchCat && matchSev && matchText;
+        });
+
+      resultCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'procedimento' : 'procedimentos'}`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>Nenhum procedimento encontrado</h3>
+            <p>Tente limpar os filtros ou buscar por outro termo.</p>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const tagClass = item.nivel === 'danger' ? 'tag-danger' : item.nivel === 'warning' ? 'tag-warning' : 'tag-info';
+        const dataTexto = item.atualizadoEm || DATA_INICIAL;
+
+        const adminActions = isAdmin ? `
+          <div class="card-actions">
+            <button class="action-btn" onclick="abrirEdicao(${item.realIndex})">✏️ Editar</button>
+            <button class="action-btn del" onclick="excluirProcedimento(${item.realIndex})">🗑️ Excluir</button>
+          </div>
+        ` : '';
+
+        return `
+          <article class="proc-card alert-${item.nivel}">
+            <div>
+              <div class="card-top">
+                <span class="code-badge">#${item.id}</span>
+                <span class="cat-label">${item.categoria}</span>
+              </div>
+              <h3 class="card-title">${item.assunto}</h3>
+              <p class="card-body">${item.descricao}</p>
+            </div>
+
+            <div class="card-bottom">
+              <div class="card-meta-row">
+                <span class="updated-info">🕒 Editado: <strong>${dataTexto}</strong></span>
+                <span class="tag-pill ${tagClass}">${item.tag}</span>
+              </div>
+              ${adminActions}
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // Login Admin
+    btnLoginAdmin.addEventListener('click', () => {
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('loginError').style.display = 'none';
+      loginModal.classList.add('open');
+      setTimeout(() => document.getElementById('adminPassword').focus(), 100);
+    });
+
+    document.getElementById('btnCancelLogin').addEventListener('click', () => loginModal.classList.remove('open'));
+
+    function tentarLogin() {
+      const senha = document.getElementById('adminPassword').value;
+      if (senha === ADMIN_SENHA) {
+        isAdmin = true;
+        loginModal.classList.remove('open');
+        atualizarInterfacePerfil();
+        showToast("🔑 Modo Administrador ativado!");
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    document.getElementById('btnConfirmLogin').addEventListener('click', tentarLogin);
+    document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') tentarLogin();
+    });
+
+    btnLogoutAdmin.addEventListener('click', () => {
+      isAdmin = false;
+      atualizarInterfacePerfil();
+      showToast("👁️ Retornado ao Modo Leitor.");
+    });
+
+    // Modal Novo
+    document.getElementById('btnOpenNew').addEventListener('click', () => {
+      if (!isAdmin) return;
+      document.getElementById('formModalTitle').textContent = "➕ Incluir Novo Procedimento";
+      document.getElementById('editIndex').value = "-1";
+      document.getElementById('procForm').reset();
+      document.getElementById('fieldId').value = String(procedimentos.length + 1).padStart(2, '0');
+      formModal.classList.add('open');
+    });
+
+    // Modal Editar
+    window.abrirEdicao = function(index) {
+      if (!isAdmin) return;
+      const item = procedimentos[index];
+      document.getElementById('formModalTitle').textContent = `✏️ Editar Procedimento #${item.id}`;
+      document.getElementById('editIndex').value = index;
+      document.getElementById('fieldId').value = item.id;
+      document.getElementById('fieldCategoria').value = item.categoria;
+      document.getElementById('fieldAssunto').value = item.assunto;
+      document.getElementById('fieldNivel').value = item.nivel;
+      document.getElementById('fieldTag').value = item.tag;
+      document.getElementById('fieldDescricao').value = item.descricao;
+      formModal.classList.add('open');
+    };
+
+    // Excluir
+    window.excluirProcedimento = function(index) {
+      if (!isAdmin) return;
+      const item = procedimentos[index];
+      if (confirm(`Deseja realmente excluir o procedimento #${item.id} (${item.assunto})?`)) {
+        procedimentos.splice(index, 1);
+        salvarLocal();
+        renderSidebar();
+        renderCards();
+        showToast("🗑️ Procedimento excluído.");
+      }
+    };
+
+    document.getElementById('btnCancelForm').addEventListener('click', () => formModal.classList.remove('open'));
+
+    // Salvar
+    document.getElementById('procForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!isAdmin) return;
+
+      const index = parseInt(document.getElementById('editIndex').value, 10);
+      const registro = {
+        id: document.getElementById('fieldId').value.trim(),
+        categoria: document.getElementById('fieldCategoria').value,
+        assunto: document.getElementById('fieldAssunto').value.trim().toUpperCase(),
+        nivel: document.getElementById('fieldNivel').value,
+        tag: document.getElementById('fieldTag').value.trim(),
+        descricao: document.getElementById('fieldDescricao').value.trim(),
+        atualizadoEm: formatarDataAtual()
+      };
+
+      if (index === -1) {
+        procedimentos.unshift(registro);
+        showToast("✅ Novo procedimento incluído!");
+      } else {
+        procedimentos[index] = registro;
+        showToast("✅ Procedimento atualizado!");
+      }
+
+      salvarLocal();
+      formModal.classList.remove('open');
+      renderSidebar();
+      renderCards();
+    });
+
+    // Exportar / Importar
+    document.getElementById('btnExport').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(procedimentos, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `portaria_procedimentos_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("💾 Backup exportado!");
+    });
+
+    document.getElementById('btnImportTrigger').addEventListener('click', () => {
+      document.getElementById('importFile').click();
+    });
+
+    document.getElementById('importFile').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const dados = JSON.parse(ev.target.result);
+          if (Array.isArray(dados)) {
+            procedimentos = dados;
+            salvarLocal();
+            renderSidebar();
+            renderCards();
+            showToast("📂 Backup importado com sucesso!");
+          }
+        } catch {
+          alert("Arquivo inválido.");
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Busca & Severidade & View Toggle
+    searchInput.addEventListener('input', renderCards);
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      renderCards();
+      searchInput.focus();
+    });
+
+    document.querySelectorAll('.sev-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSeverity = btn.dataset.sev;
+        renderCards();
+      });
+    });
+
+    document.getElementById('btnGridView').addEventListener('click', (e) => {
+      e.target.classList.add('active');
+      document.getElementById('btnListView').classList.remove('active');
+      container.classList.remove('list-view');
+    });
+
+    document.getElementById('btnListView').addEventListener('click', (e) => {
+      e.target.classList.add('active');
+      document.getElementById('btnGridView').classList.remove('active');
+      container.classList.add('list-view');
+    });
+
+    renderSidebar();
+    atualizarInterfacePerfil();
+  </script>
+</body>
+</html>
